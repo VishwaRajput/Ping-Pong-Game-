@@ -1,0 +1,83 @@
+import simplegui,random
+W=800
+H=600
+R=20
+p=13
+brk=0
+y,y1=0,0
+l1,l2=0,0
+l3,l4=0,0
+u1,d1=0,0
+x2,y2=0,0
+u,d=0,0
+sp,sb=0,0
+C=[W/2,H/2]
+lst=[-3,-2,2,3]
+x2=random.choice(lst)    
+y2=random.choice(lst)
+def draw(canvas):
+    global l3,l4,l1,l2,y,u,d,y1,x2,y2,C,sp,sb,brk
+    canvas.draw_line([p,0],[p,H],1,'blue')
+    canvas.draw_line([W-p,0],[W-p,H],1,'pink')
+    l1=[0,0+y]
+    l3=[0,100+y]
+    canvas.draw_line(l1,l3,25,'blue')
+    l2=[W,0+y1]
+    l4=[W,100+y1]
+    canvas.draw_line(l2,l4,25,'pink')
+    canvas.draw_circle(C,R,1,'black','red')
+    if u==1 and l1[1]>=0:
+        y-=10
+    if d==1 and l3[1]<=H:
+        y+=10
+    if u1==1 and l2[1]>=0:
+        y1-=10
+    if d1==1 and l4[1]<=H:
+        y1+=10
+    if brk%2==0:
+        C[0]+=x2
+        C[1]+=y2
+        if C[0]<=(R+p) or C[0]>=W-(R+p):
+            x2=-x2
+            if C[0]<(R+p) and not(l1[1]<C[1] and l3[1]>C[1]):
+                sp+=1
+                C=[W/2,H/2]
+            if C[0]<(R+p) and (l1[1]<C[1] and l3[1]>C[1]):
+                sb+=1    
+            if C[0]>W-(R+p) and not(l2[1]<C[1] and l4[1]>C[1]):
+                sb+=1
+                C=[W/2,H/2]
+            if C[0]>W-(R+p) and (l2[1]<C[1] and l4[1]>C[1]):
+                sp+=1
+        if C[1]<R or C[1]>H-R:
+            y2=-y2   
+    canvas.draw_text('score: '+str(sp),[635,50],32,"pink")
+    canvas.draw_text('score: '+str(sb),[50,50],32,"blue")
+def kd(k):
+    global u,d,u1,d1,brk
+    if k==simplegui.KEY_MAP['up']:
+        u=1
+    if k==simplegui.KEY_MAP['down']:
+        d=1
+    if k==simplegui.KEY_MAP['w']:
+        u1=1
+    if k==simplegui.KEY_MAP['a']:
+        d1=1
+    if k==simplegui.KEY_MAP['space']:
+        brk+=1
+def ku(k):
+    global u,d,u1,d1
+    if k==simplegui.KEY_MAP['up']:
+        u=0
+    if k==simplegui.KEY_MAP['down']:
+        d=0
+    if k==simplegui.KEY_MAP['w']:
+        u1=0
+    if k==simplegui.KEY_MAP['a']:
+        d1=0
+frame=simplegui.create_frame("pong",W,H)
+frame.set_canvas_background("green")
+frame.set_keydown_handler(kd)
+frame.set_keyup_handler(ku)
+frame.set_draw_handler(draw)
+frame.start()
